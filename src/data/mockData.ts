@@ -19,6 +19,7 @@ export interface Startup {
   fundingRaised: number;
   initials: string;
   color: string;
+  image?: string;
 }
 
 export interface Mentor {
