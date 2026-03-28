@@ -39,6 +39,7 @@ import DealRoomPage from "./pages/DealRoom";
 import SettingsPage from "./pages/Settings";
 import ForgotPassword from "./pages/ForgotPassword";
 import ResetPassword from "./pages/ResetPassword";
+import HowItWorks from "./pages/HowItWorks";
 
 const queryClient = new QueryClient();
 
