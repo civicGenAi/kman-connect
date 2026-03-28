@@ -43,6 +43,8 @@ export const investors: Investor[] = [
   { id: "3", name: "Robert Ochieng", location: "Kampala", deployed: 210000, avatar: "RO", sectors: ["FinTech", "Logistics"] },
 ];
 
+export const startupImages: Record<string, string> = {};
+
 export const startups: Startup[] = [
   { id: "1", name: "TanzaFarm", sector: "AgriTech", stage: "Seed", oneLiner: "Smart farming solutions for Tanzanian smallholders", fundingGoal: 150000, fundingRaised: 67500, initials: "TF", color: "bg-emerald-500" },
   { id: "2", name: "SwahiliPay", sector: "FinTech", stage: "Pre-seed", oneLiner: "Mobile-first payments for East African merchants", fundingGoal: 300000, fundingRaised: 216000, initials: "SP", color: "bg-blue-500" },
