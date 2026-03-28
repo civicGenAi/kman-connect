@@ -60,6 +60,7 @@ const App = () => (
             <Route path="/register" element={<RegisterPage />} />
             <Route path="/forgot-password" element={<ForgotPassword />} />
             <Route path="/reset-password" element={<ResetPassword />} />
+            <Route path="/how-it-works" element={<HowItWorks />} />
 
             <Route path="/investor/dashboard" element={<InvestorDashboard />} />
             <Route path="/investor/deals" element={<DealFlow />} />
