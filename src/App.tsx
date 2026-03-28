@@ -37,6 +37,8 @@ import AdminPayments from "./pages/admin/Payments";
 import MessagesPage from "./pages/Messages";
 import DealRoomPage from "./pages/DealRoom";
 import SettingsPage from "./pages/Settings";
+import ForgotPassword from "./pages/ForgotPassword";
+import ResetPassword from "./pages/ResetPassword";
 
 const queryClient = new QueryClient();
 
