@@ -2,7 +2,8 @@ import { useState } from "react";
 import { PublicLayout } from "@/components/kman/PublicLayout";
 import { MentorCard } from "@/components/kman/MentorCard";
 import { mentors } from "@/data/mockData";
-import { Search } from "lucide-react";
+import { useScrollReveal } from "@/hooks/useScrollReveal";
+import { Search, SlidersHorizontal, Mountain } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 const expertiseFilters = ["All", "FinTech", "AgriTech", "Marketing", "Legal", "Product", "Impact Investing", "Operations", "Finance", "HealthTech"];
@@ -10,6 +11,7 @@ const expertiseFilters = ["All", "FinTech", "AgriTech", "Marketing", "Legal", "P
 const MentorsPage = () => {
   const [search, setSearch] = useState("");
   const [expertise, setExpertise] = useState("All");
+  const scrollRef = useScrollReveal();
 
   const filtered = mentors.filter((m) =>
     (expertise === "All" || m.expertise.includes(expertise)) &&
@@ -18,41 +20,64 @@ const MentorsPage = () => {
 
   return (
     <PublicLayout>
-      <section className="bg-secondary grain-overlay py-16 relative">
-        <div className="container relative z-10 text-center">
-          <h1 className="text-4xl font-display font-bold text-secondary-foreground">Mentor Marketplace</h1>
-          <p className="text-secondary-foreground/70 mt-2">Book sessions with industry experts across East Africa</p>
-        </div>
-      </section>
+      <div ref={scrollRef}>
+        {/* Hero */}
+        <section className="bg-secondary grain-overlay py-24 relative overflow-hidden">
+          <div className="absolute bottom-10 right-10 w-64 h-64 rounded-full bg-primary/10 blur-[120px]" />
+          <div className="container relative z-10 text-center">
+            <div className="inline-flex items-center gap-2 glass rounded-full px-4 py-2 mb-6">
+              <Mountain className="h-4 w-4 text-primary" />
+              <span className="text-sm text-secondary-foreground/70 font-medium">Marketplace</span>
+            </div>
+            <h1 className="text-4xl md:text-5xl font-display font-bold text-secondary-foreground mb-4 animate-fade-in-up">Mentor Marketplace</h1>
+            <p className="text-secondary-foreground/60 max-w-lg mx-auto animate-fade-in-up" style={{ animationDelay: "100ms" }}>
+              Book sessions with industry experts shaping the East African ecosystem
+            </p>
+          </div>
+        </section>
 
-      <section className="py-8 bg-card border-b sticky top-16 z-10">
-        <div className="container flex flex-wrap gap-4 items-center">
-          <div className="relative flex-1 min-w-[200px]">
-            <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-            <input value={search} onChange={(e) => setSearch(e.target.value)} placeholder="Search mentors..."
-              className="w-full rounded-lg border border-input bg-background pl-10 pr-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-ring" />
+        {/* Filters */}
+        <section className="py-6 bg-card border-b sticky top-16 z-10">
+          <div className="container space-y-4">
+            <div className="relative max-w-md">
+              <Search className="absolute left-4 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+              <input value={search} onChange={(e) => setSearch(e.target.value)} placeholder="Search mentors..."
+                className="w-full rounded-full border border-input bg-background pl-11 pr-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-ring transition-all" />
+            </div>
+            <div className="flex flex-wrap gap-2 items-center">
+              <SlidersHorizontal className="h-4 w-4 text-muted-foreground mr-1" />
+              {expertiseFilters.map((e) => (
+                <button key={e} onClick={() => setExpertise(e)}
+                  className={cn("rounded-full px-4 py-1.5 text-xs font-semibold border transition-all duration-200 whitespace-nowrap",
+                    expertise === e ? "gradient-gold text-secondary border-transparent shadow-md" : "border-border text-muted-foreground hover:text-foreground hover:border-foreground/30"
+                  )}>
+                  {e}
+                </button>
+              ))}
+            </div>
           </div>
-          <div className="flex gap-2 overflow-x-auto">
-            {expertiseFilters.map((e) => (
-              <button key={e} onClick={() => setExpertise(e)}
-                className={cn("rounded-full px-3 py-1.5 text-xs font-medium border transition-colors whitespace-nowrap",
-                  expertise === e ? "gradient-gold text-secondary border-transparent" : "border-border text-muted-foreground hover:text-foreground"
-                )}>
-                {e}
-              </button>
-            ))}
-          </div>
-        </div>
-      </section>
+        </section>
 
-      <section className="py-8 bg-background">
-        <div className="container">
-          <p className="text-sm text-muted-foreground mb-6">{filtered.length} mentors found</p>
-          <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
-            {filtered.map((m) => <MentorCard key={m.id} mentor={m} />)}
+        {/* Grid */}
+        <section className="py-12 bg-background">
+          <div className="container">
+            <p className="text-sm text-muted-foreground mb-8 font-medium reveal">{filtered.length} mentor{filtered.length !== 1 ? "s" : ""} found</p>
+            <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+              {filtered.map((m, i) => (
+                <div key={m.id} className={`reveal reveal-delay-${(i % 3) + 1}`}>
+                  <MentorCard mentor={m} />
+                </div>
+              ))}
+            </div>
+            {filtered.length === 0 && (
+              <div className="text-center py-20 reveal">
+                <p className="text-2xl font-display font-bold text-muted-foreground/50 mb-2">No results</p>
+                <p className="text-muted-foreground">Try adjusting your filters.</p>
+              </div>
+            )}
           </div>
-        </div>
-      </section>
+        </section>
+      </div>
     </PublicLayout>
   );
 };

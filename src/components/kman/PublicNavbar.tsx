@@ -1,5 +1,5 @@
 import { Link, useLocation } from "react-router-dom";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useAuth } from "@/contexts/AuthContext";
 import { cn } from "@/lib/utils";
 import kmanLogo from "@/assets/kman-logo.png";
@@ -18,9 +18,19 @@ export const PublicNavbar = () => {
   const { isAuthenticated, user } = useAuth();
   const location = useLocation();
   const [open, setOpen] = useState(false);
+  const [scrolled, setScrolled] = useState(false);
+
+  useEffect(() => {
+    const onScroll = () => setScrolled(window.scrollY > 20);
+    window.addEventListener("scroll", onScroll);
+    return () => window.removeEventListener("scroll", onScroll);
+  }, []);
 
   return (
-    <header className="fixed top-0 left-0 right-0 z-50 border-b border-border/50 bg-card/80 backdrop-blur-lg">
+    <header className={cn(
+      "fixed top-0 left-0 right-0 z-50 transition-all duration-300",
+      scrolled ? "bg-card/90 backdrop-blur-xl shadow-sm border-b border-border/50" : "bg-transparent"
+    )}>
       <div className="container flex h-16 items-center justify-between">
         <Link to="/" className="flex items-center gap-2">
           <img src={kmanLogo} alt="KMAN" className="h-10 w-auto" />
@@ -32,10 +42,10 @@ export const PublicNavbar = () => {
               key={link.path}
               to={link.path}
               className={cn(
-                "px-3 py-2 rounded-lg text-sm font-medium transition-colors",
+                "px-4 py-2 rounded-full text-sm font-semibold transition-all duration-200",
                 location.pathname === link.path
-                  ? "text-primary font-semibold"
-                  : "text-muted-foreground hover:text-foreground"
+                  ? "text-primary bg-primary/10"
+                  : scrolled ? "text-muted-foreground hover:text-foreground" : "text-secondary-foreground/70 hover:text-secondary-foreground"
               )}
             >
               {link.label}
@@ -51,7 +61,7 @@ export const PublicNavbar = () => {
           ) : (
             <>
               <Link to="/login">
-                <KmanButton variant="ghost" size="sm">Log In</KmanButton>
+                <KmanButton variant="ghost" size="sm" className={cn(!scrolled && "text-secondary-foreground/80 hover:text-secondary-foreground hover:bg-secondary-foreground/10")}>Log In</KmanButton>
               </Link>
               <Link to="/apply">
                 <KmanButton variant="primary" size="sm">Get Started</KmanButton>
@@ -60,25 +70,32 @@ export const PublicNavbar = () => {
           )}
         </div>
 
-        <button onClick={() => setOpen(!open)} className="md:hidden">
+        <button onClick={() => setOpen(!open)} className={cn("md:hidden p-2 rounded-full transition-colors", scrolled ? "text-foreground" : "text-secondary-foreground")}>
           {open ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
         </button>
       </div>
 
-      {open && (
-        <div className="md:hidden border-t bg-card p-4 space-y-2">
+      {/* Mobile menu */}
+      <div className={cn(
+        "md:hidden overflow-hidden transition-all duration-300",
+        open ? "max-h-[400px] opacity-100" : "max-h-0 opacity-0"
+      )}>
+        <div className="bg-card/95 backdrop-blur-xl border-t border-border/50 p-4 space-y-1">
           {navLinks.map((link) => (
             <Link
               key={link.path}
               to={link.path}
               onClick={() => setOpen(false)}
-              className="block px-3 py-2 rounded-lg text-sm font-medium hover:bg-muted"
+              className={cn(
+                "block px-4 py-2.5 rounded-full text-sm font-semibold transition-all",
+                location.pathname === link.path ? "text-primary bg-primary/10" : "text-muted-foreground hover:bg-muted"
+              )}
             >
               {link.label}
             </Link>
           ))}
-          <hr className="border-border" />
-          <div className="flex gap-2 pt-2">
+          <hr className="border-border my-2" />
+          <div className="flex gap-2 pt-1">
             <Link to="/login" className="flex-1" onClick={() => setOpen(false)}>
               <KmanButton variant="ghost" size="sm" className="w-full">Log In</KmanButton>
             </Link>
@@ -87,7 +104,7 @@ export const PublicNavbar = () => {
             </Link>
           </div>
         </div>
-      )}
+      </div>
     </header>
   );
 };
