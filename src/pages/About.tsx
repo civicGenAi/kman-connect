@@ -1,15 +1,16 @@
 import { PublicLayout } from "@/components/kman/PublicLayout";
 import { KmanCard } from "@/components/kman/KmanCard";
-import { KmanBadge } from "@/components/kman/KmanBadge";
-import { KmanButton } from "@/components/kman/KmanButton";
+import { useScrollReveal } from "@/hooks/useScrollReveal";
 import { useCountUp } from "@/hooks/useCountUp";
-import { Users, Target, Heart, Lightbulb } from "lucide-react";
+import { Users, Target, Heart, Lightbulb, ArrowRight, Mountain } from "lucide-react";
+import { Link } from "react-router-dom";
+import { KmanButton } from "@/components/kman/KmanButton";
 
 const team = [
-  { name: "Dr. Joseph Moshi", role: "Founder & CEO", bio: "Former investment banker with 15 years in East African private equity", initials: "JM", color: "bg-kman-gold" },
-  { name: "Sophia Kimaro", role: "Head of Investments", bio: "Led $50M+ in angel investments across the region", initials: "SK", color: "bg-blue-500" },
-  { name: "Emmanuel Osei", role: "CTO", bio: "Built fintech platforms serving 2M+ users in Africa", initials: "EO", color: "bg-emerald-500" },
-  { name: "Amina Hassan", role: "Head of Mentorship", bio: "Designed accelerator programs for 200+ startups", initials: "AH", color: "bg-violet-500" },
+  { name: "Dr. Joseph Moshi", role: "Founder & CEO", bio: "Former investment banker with 15 years in East African private equity", initials: "JM", color: "bg-primary" },
+  { name: "Sophia Kimaro", role: "Head of Investments", bio: "Led $50M+ in angel investments across the region", initials: "SK", color: "bg-accent" },
+  { name: "Emmanuel Osei", role: "CTO", bio: "Built fintech platforms serving 2M+ users in Africa", initials: "EO", color: "bg-success" },
+  { name: "Amina Hassan", role: "Head of Mentorship", bio: "Designed accelerator programs for 200+ startups", initials: "AH", color: "bg-destructive" },
 ];
 
 const timeline = [
@@ -26,73 +27,119 @@ const values = [
   { icon: Target, title: "Growth", desc: "Relentlessly focused on creating value and scaling impact" },
 ];
 
-const AboutPage = () => (
-  <PublicLayout>
-    <section className="bg-secondary grain-overlay py-24 relative">
-      <div className="container relative z-10 max-w-3xl text-center">
-        <h1 className="text-4xl md:text-5xl font-display font-bold text-secondary-foreground mb-6">
-          Powering East Africa's Next Generation of Startups
-        </h1>
-        <p className="text-lg text-secondary-foreground/70">Connecting visionary founders with smart capital and world-class mentorship since 2022</p>
-      </div>
-    </section>
+const AboutPage = () => {
+  const scrollRef = useScrollReveal();
 
-    <section className="py-20 bg-card">
-      <div className="container max-w-3xl">
-        <blockquote className="text-2xl md:text-3xl font-display font-bold text-foreground leading-relaxed text-center border-l-4 border-primary pl-6">
-          "Our mission is to democratize access to angel investment and mentorship for East African entrepreneurs, building a thriving ecosystem from the foothills of Kilimanjaro to the shores of Lake Victoria."
-        </blockquote>
-      </div>
-    </section>
+  return (
+    <PublicLayout>
+      <div ref={scrollRef}>
+        {/* Hero */}
+        <section className="bg-secondary grain-overlay py-28 relative overflow-hidden">
+          <div className="absolute top-10 right-10 w-72 h-72 rounded-full bg-primary/10 blur-[120px]" />
+          <div className="container relative z-10 max-w-3xl text-center">
+            <div className="inline-flex items-center gap-2 glass rounded-full px-4 py-2 mb-6">
+              <Mountain className="h-4 w-4 text-primary" />
+              <span className="text-sm text-secondary-foreground/70 font-medium">Our Story</span>
+            </div>
+            <h1 className="text-4xl md:text-6xl font-display font-bold text-secondary-foreground mb-6 leading-tight animate-fade-in-up">
+              Powering East Africa's Next Generation of{" "}
+              <span className="shimmer">Startups</span>
+            </h1>
+            <p className="text-lg text-secondary-foreground/60 animate-fade-in-up leading-relaxed" style={{ animationDelay: "150ms" }}>
+              Connecting visionary founders with smart capital and world-class mentorship since 2022
+            </p>
+          </div>
+        </section>
 
-    <section className="py-20 bg-background">
-      <div className="container">
-        <h2 className="text-3xl font-display font-bold text-center mb-12">Our Team</h2>
-        <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-4">
-          {team.map((t) => (
-            <KmanCard key={t.name} className="text-center">
-              <div className={`mx-auto flex h-16 w-16 items-center justify-center rounded-full ${t.color} text-lg font-bold text-card mb-4`}>{t.initials}</div>
-              <h3 className="font-display font-bold">{t.name}</h3>
-              <p className="text-sm text-primary font-medium">{t.role}</p>
-              <p className="text-sm text-muted-foreground mt-2">{t.bio}</p>
-            </KmanCard>
-          ))}
-        </div>
-      </div>
-    </section>
+        {/* Mission */}
+        <section className="py-24 bg-card">
+          <div className="container max-w-3xl reveal">
+            <blockquote className="text-xl md:text-2xl font-display font-bold text-foreground leading-relaxed text-center relative">
+              <span className="text-6xl text-primary/20 font-display absolute -top-8 -left-4">"</span>
+              Our mission is to democratize access to angel investment and mentorship for East African entrepreneurs, building a thriving ecosystem from the foothills of Kilimanjaro to the shores of Lake Victoria.
+              <span className="text-6xl text-primary/20 font-display absolute -bottom-12 right-0">"</span>
+            </blockquote>
+          </div>
+        </section>
 
-    <section className="py-20 bg-kman-off-white">
-      <div className="container">
-        <h2 className="text-3xl font-display font-bold text-center mb-12">Our Journey</h2>
-        <div className="flex overflow-x-auto gap-6 pb-4 snap-x">
-          {timeline.map((t) => (
-            <KmanCard key={t.year} goldBorder className="min-w-[280px] snap-start">
-              <span className="text-3xl font-display font-bold text-primary">{t.year}</span>
-              <h3 className="font-display font-bold mt-2">{t.title}</h3>
-              <p className="text-sm text-muted-foreground mt-1">{t.desc}</p>
-            </KmanCard>
-          ))}
-        </div>
-      </div>
-    </section>
+        {/* Team */}
+        <section className="py-24 bg-background">
+          <div className="container">
+            <div className="reveal text-center mb-14">
+              <span className="text-sm font-semibold text-primary uppercase tracking-wider">Leadership</span>
+              <h2 className="text-3xl md:text-4xl font-display font-bold mt-2">Our Team</h2>
+            </div>
+            <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-4">
+              {team.map((t, i) => (
+                <div key={t.name} className={`reveal reveal-delay-${i + 1}`}>
+                  <KmanCard className="text-center group">
+                    <div className={`mx-auto flex h-20 w-20 items-center justify-center rounded-2xl ${t.color} text-xl font-bold text-card mb-5 group-hover:scale-110 transition-transform duration-300`}>{t.initials}</div>
+                    <h3 className="font-display font-bold text-lg">{t.name}</h3>
+                    <p className="text-sm text-primary font-semibold">{t.role}</p>
+                    <p className="text-sm text-muted-foreground mt-3 leading-relaxed">{t.bio}</p>
+                  </KmanCard>
+                </div>
+              ))}
+            </div>
+          </div>
+        </section>
 
-    <section className="py-20 bg-card">
-      <div className="container">
-        <h2 className="text-3xl font-display font-bold text-center mb-12">Our Values</h2>
-        <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-4">
-          {values.map((v) => (
-            <KmanCard key={v.title} className="text-center">
-              <div className="mx-auto flex h-14 w-14 items-center justify-center rounded-2xl gradient-gold mb-4">
-                <v.icon className="h-6 w-6 text-secondary" />
-              </div>
-              <h3 className="font-display font-bold">{v.title}</h3>
-              <p className="text-sm text-muted-foreground mt-2">{v.desc}</p>
-            </KmanCard>
-          ))}
-        </div>
+        {/* Timeline */}
+        <section className="py-24 bg-secondary grain-overlay">
+          <div className="container relative z-10">
+            <div className="reveal text-center mb-14">
+              <span className="text-sm font-semibold text-primary uppercase tracking-wider">Milestones</span>
+              <h2 className="text-3xl md:text-4xl font-display font-bold text-secondary-foreground mt-2">Our Journey</h2>
+            </div>
+            <div className="grid md:grid-cols-4 gap-6">
+              {timeline.map((t, i) => (
+                <div key={t.year} className={`reveal reveal-delay-${i + 1}`}>
+                  <div className="glass rounded-2xl p-6 h-full hover:gold-glow transition-all duration-300">
+                    <span className="text-4xl font-display font-bold text-primary">{t.year}</span>
+                    <h3 className="font-display font-bold text-secondary-foreground mt-3">{t.title}</h3>
+                    <p className="text-sm text-secondary-foreground/60 mt-2 leading-relaxed">{t.desc}</p>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+        </section>
+
+        {/* Values */}
+        <section className="py-24 bg-card">
+          <div className="container">
+            <div className="reveal text-center mb-14">
+              <span className="text-sm font-semibold text-primary uppercase tracking-wider">Principles</span>
+              <h2 className="text-3xl md:text-4xl font-display font-bold mt-2">Our Values</h2>
+            </div>
+            <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-4">
+              {values.map((v, i) => (
+                <div key={v.title} className={`reveal reveal-delay-${i + 1}`}>
+                  <KmanCard className="text-center group">
+                    <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-2xl gradient-gold mb-5 group-hover:scale-110 transition-transform duration-300 gold-glow">
+                      <v.icon className="h-7 w-7 text-secondary" />
+                    </div>
+                    <h3 className="font-display font-bold text-lg">{v.title}</h3>
+                    <p className="text-sm text-muted-foreground mt-3 leading-relaxed">{v.desc}</p>
+                  </KmanCard>
+                </div>
+              ))}
+            </div>
+          </div>
+        </section>
+
+        {/* CTA */}
+        <section className="py-24 gradient-gold relative overflow-hidden">
+          <div className="absolute inset-0 bg-[radial-gradient(circle_at_70%_50%,rgba(255,255,255,0.15),transparent_50%)]" />
+          <div className="container relative text-center reveal">
+            <h2 className="text-3xl md:text-4xl font-display font-bold text-secondary mb-4">Be Part of the Story</h2>
+            <p className="text-secondary/70 mb-8 max-w-lg mx-auto">Join the growing KMAN community and help shape the future of East African entrepreneurship.</p>
+            <Link to="/apply"><KmanButton variant="secondary" size="lg">Get Started <ArrowRight className="h-4 w-4" /></KmanButton></Link>
+          </div>
+        </section>
       </div>
-    </section>
-  </PublicLayout>
-);
+    </PublicLayout>
+  );
+};
 
 export default AboutPage;

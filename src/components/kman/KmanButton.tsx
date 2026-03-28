@@ -7,7 +7,7 @@ interface KmanButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
 }
 
 const variantClasses: Record<string, string> = {
-  primary: "gradient-gold text-secondary-foreground font-semibold shadow-md hover:shadow-lg",
+  primary: "gradient-gold text-secondary-foreground font-semibold shadow-md hover:shadow-xl hover:brightness-110",
   secondary: "bg-secondary text-secondary-foreground hover:bg-secondary/90",
   ghost: "bg-transparent hover:bg-muted text-foreground",
   danger: "bg-destructive text-destructive-foreground hover:bg-destructive/90",
@@ -15,9 +15,9 @@ const variantClasses: Record<string, string> = {
 };
 
 const sizeClasses: Record<string, string> = {
-  sm: "px-3 py-1.5 text-sm rounded-md",
-  md: "px-5 py-2.5 text-sm rounded-lg",
-  lg: "px-8 py-3.5 text-base rounded-xl",
+  sm: "px-4 py-2 text-sm rounded-full",
+  md: "px-6 py-2.5 text-sm rounded-full",
+  lg: "px-8 py-3.5 text-base rounded-full",
 };
 
 export const KmanButton = forwardRef<HTMLButtonElement, KmanButtonProps>(
@@ -25,7 +25,7 @@ export const KmanButton = forwardRef<HTMLButtonElement, KmanButtonProps>(
     <button
       ref={ref}
       className={cn(
-        "inline-flex items-center justify-center gap-2 font-medium transition-all duration-200 btn-press disabled:opacity-50 disabled:pointer-events-none",
+        "inline-flex items-center justify-center gap-2 font-semibold transition-all duration-300 btn-press disabled:opacity-50 disabled:pointer-events-none",
         variantClasses[variant],
         sizeClasses[size],
         className
