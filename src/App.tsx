@@ -39,6 +39,7 @@ import DealRoomPage from "./pages/DealRoom";
 import SettingsPage from "./pages/Settings";
 import ForgotPassword from "./pages/ForgotPassword";
 import ResetPassword from "./pages/ResetPassword";
+import HowItWorks from "./pages/HowItWorks";
 
 const queryClient = new QueryClient();
 
@@ -59,6 +60,7 @@ const App = () => (
             <Route path="/register" element={<RegisterPage />} />
             <Route path="/forgot-password" element={<ForgotPassword />} />
             <Route path="/reset-password" element={<ResetPassword />} />
+            <Route path="/how-it-works" element={<HowItWorks />} />
 
             <Route path="/investor/dashboard" element={<InvestorDashboard />} />
             <Route path="/investor/deals" element={<DealFlow />} />

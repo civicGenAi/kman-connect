@@ -19,6 +19,7 @@ export interface Startup {
   fundingRaised: number;
   initials: string;
   color: string;
+  image?: string;
 }
 
 export interface Mentor {
@@ -41,6 +42,8 @@ export const investors: Investor[] = [
   { id: "2", name: "Fatuma Nkosi", location: "Nairobi", deployed: 85000, avatar: "FN", sectors: ["EdTech", "HealthTech"] },
   { id: "3", name: "Robert Ochieng", location: "Kampala", deployed: 210000, avatar: "RO", sectors: ["FinTech", "Logistics"] },
 ];
+
+export const startupImages: Record<string, string> = {};
 
 export const startups: Startup[] = [
   { id: "1", name: "TanzaFarm", sector: "AgriTech", stage: "Seed", oneLiner: "Smart farming solutions for Tanzanian smallholders", fundingGoal: 150000, fundingRaised: 67500, initials: "TF", color: "bg-emerald-500" },

@@ -29,7 +29,7 @@ export const PublicNavbar = () => {
   return (
     <header className={cn(
       "fixed top-0 left-0 right-0 z-50 transition-all duration-300",
-      scrolled ? "bg-card/90 backdrop-blur-xl shadow-sm border-b border-border/50" : "bg-transparent"
+      scrolled ? "bg-secondary/95 backdrop-blur-xl shadow-lg shadow-black/10 border-b border-secondary-foreground/10" : "bg-transparent"
     )}>
       <div className="container flex h-16 items-center justify-between">
         <Link to="/" className="flex items-center gap-2">
@@ -45,7 +45,7 @@ export const PublicNavbar = () => {
                 "px-4 py-2 rounded-full text-sm font-semibold transition-all duration-200",
                 location.pathname === link.path
                   ? "text-primary bg-primary/10"
-                  : scrolled ? "text-muted-foreground hover:text-foreground" : "text-secondary-foreground/70 hover:text-secondary-foreground"
+                  : "text-secondary-foreground/70 hover:text-secondary-foreground hover:bg-secondary-foreground/5"
               )}
             >
               {link.label}
@@ -61,7 +61,7 @@ export const PublicNavbar = () => {
           ) : (
             <>
               <Link to="/login">
-                <KmanButton variant="ghost" size="sm" className={cn(!scrolled && "text-secondary-foreground/80 hover:text-secondary-foreground hover:bg-secondary-foreground/10")}>Log In</KmanButton>
+                <KmanButton variant="ghost" size="sm" className="text-secondary-foreground/80 hover:text-secondary-foreground hover:bg-secondary-foreground/10">Log In</KmanButton>
               </Link>
               <Link to="/apply">
                 <KmanButton variant="primary" size="sm">Get Started</KmanButton>
@@ -70,7 +70,7 @@ export const PublicNavbar = () => {
           )}
         </div>
 
-        <button onClick={() => setOpen(!open)} className={cn("md:hidden p-2 rounded-full transition-colors", scrolled ? "text-foreground" : "text-secondary-foreground")}>
+        <button onClick={() => setOpen(!open)} className="md:hidden p-2 rounded-full transition-colors text-secondary-foreground">
           {open ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
         </button>
       </div>
@@ -80,7 +80,7 @@ export const PublicNavbar = () => {
         "md:hidden overflow-hidden transition-all duration-300",
         open ? "max-h-[400px] opacity-100" : "max-h-0 opacity-0"
       )}>
-        <div className="bg-card/95 backdrop-blur-xl border-t border-border/50 p-4 space-y-1">
+        <div className="bg-secondary/95 backdrop-blur-xl border-t border-secondary-foreground/10 p-4 space-y-1">
           {navLinks.map((link) => (
             <Link
               key={link.path}
@@ -88,16 +88,16 @@ export const PublicNavbar = () => {
               onClick={() => setOpen(false)}
               className={cn(
                 "block px-4 py-2.5 rounded-full text-sm font-semibold transition-all",
-                location.pathname === link.path ? "text-primary bg-primary/10" : "text-muted-foreground hover:bg-muted"
+                location.pathname === link.path ? "text-primary bg-primary/10" : "text-secondary-foreground/70 hover:bg-secondary-foreground/5"
               )}
             >
               {link.label}
             </Link>
           ))}
-          <hr className="border-border my-2" />
+          <hr className="border-secondary-foreground/10 my-2" />
           <div className="flex gap-2 pt-1">
             <Link to="/login" className="flex-1" onClick={() => setOpen(false)}>
-              <KmanButton variant="ghost" size="sm" className="w-full">Log In</KmanButton>
+              <KmanButton variant="ghost" size="sm" className="w-full text-secondary-foreground/80">Log In</KmanButton>
             </Link>
             <Link to="/apply" className="flex-1" onClick={() => setOpen(false)}>
               <KmanButton variant="primary" size="sm" className="w-full">Get Started</KmanButton>

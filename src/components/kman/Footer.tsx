@@ -13,7 +13,7 @@ const platformLinks = [
 
 const companyLinks = [
   { label: "About KMAN", path: "/about" },
-  { label: "Careers", path: "#" },
+  { label: "How It Works", path: "/how-it-works" },
   { label: "Blog & Insights", path: "#" },
   { label: "Press Kit", path: "#" },
   { label: "Contact Us", path: "#" },
