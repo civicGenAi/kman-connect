@@ -57,6 +57,8 @@ const App = () => (
             <Route path="/apply" element={<ApplyPage />} />
             <Route path="/login" element={<LoginPage />} />
             <Route path="/register" element={<RegisterPage />} />
+            <Route path="/forgot-password" element={<ForgotPassword />} />
+            <Route path="/reset-password" element={<ResetPassword />} />
 
             <Route path="/investor/dashboard" element={<InvestorDashboard />} />
             <Route path="/investor/deals" element={<DealFlow />} />
