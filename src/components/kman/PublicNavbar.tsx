@@ -29,7 +29,9 @@ export const PublicNavbar = () => {
   return (
     <header className={cn(
       "fixed top-0 left-0 right-0 z-50 transition-all duration-300",
-      scrolled ? "bg-secondary/95 backdrop-blur-xl shadow-lg shadow-black/10 border-b border-secondary-foreground/10" : "bg-transparent"
+      scrolled
+        ? "bg-secondary/95 backdrop-blur-xl shadow-lg shadow-black/10 border-b border-secondary-foreground/10"
+        : "bg-secondary/80 backdrop-blur-md"
     )}>
       <div className="container flex h-16 items-center justify-between">
         <Link to="/" className="flex items-center gap-2">
@@ -45,7 +47,7 @@ export const PublicNavbar = () => {
                 "px-4 py-2 rounded-full text-sm font-semibold transition-all duration-200",
                 location.pathname === link.path
                   ? "text-primary bg-primary/10"
-                  : "text-secondary-foreground/70 hover:text-secondary-foreground hover:bg-secondary-foreground/5"
+                  : "text-secondary-foreground/80 hover:text-secondary-foreground hover:bg-secondary-foreground/10"
               )}
             >
               {link.label}
@@ -71,7 +73,7 @@ export const PublicNavbar = () => {
         </div>
 
         <button onClick={() => setOpen(!open)} className="md:hidden p-2 rounded-full transition-colors text-secondary-foreground">
-          {open ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
+          {open ? <X className="h-6 w-6" /> : <Menu className="h-6 w-6" />}
         </button>
       </div>
 
