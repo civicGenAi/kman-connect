@@ -5,8 +5,8 @@ import { StartupCard } from "@/components/kman/StartupCard";
 import { startups, mentors } from "@/data/mockData";
 import { useCountUp } from "@/hooks/useCountUp";
 import { useScrollReveal } from "@/hooks/useScrollReveal";
-import { ChevronDown, ArrowRight, Mountain, Star, CheckCircle2, Globe, Building2, Lightbulb } from "lucide-react";
-import { useState } from "react";
+import { ChevronDown, ArrowRight, Star, Globe, Building2, Lightbulb, Handshake, GraduationCap, Shield, TrendingUp } from "lucide-react";
+import { useState, useRef, useEffect } from "react";
 
 // Location images
 import darImg from "@/assets/locations/dar-es-salaam.jpg";
@@ -29,12 +29,12 @@ const locations = [
 ];
 
 const partners = [
-  { name: "Zanzibar Investment Promotion Agency", short: "ZIPA" },
-  { name: "Tanzania Private Sector Foundation", short: "TPSF" },
-  { name: "East Africa Venture Capital Assoc.", short: "EAVCA" },
-  { name: "Seedstars", short: "Seedstars" },
-  { name: "Startup Grind Arusha", short: "SG Arusha" },
-  { name: "Africa Development Bank", short: "AfDB" },
+  { name: "Zanzibar Investment Promotion Agency", short: "ZIPA", type: "Government" },
+  { name: "Tanzania Private Sector Foundation", short: "TPSF", type: "Industry Body" },
+  { name: "East Africa Venture Capital Assoc.", short: "EAVCA", type: "Network" },
+  { name: "Seedstars", short: "Seedstars", type: "Accelerator" },
+  { name: "Startup Grind Arusha", short: "SG Arusha", type: "Community" },
+  { name: "Africa Development Bank", short: "AfDB", type: "Development Finance" },
 ];
 
 const StatCounter = ({ value, label, prefix = "", suffix = "" }: { value: number; label: string; prefix?: string; suffix?: string }) => {
@@ -56,8 +56,34 @@ const MountainSilhouette = () => (
   </svg>
 );
 
+/* Infinite horizontal marquee for startup cards */
+const StartupMarquee = () => {
+  const allStartups = startups;
+  // Duplicate for seamless loop
+  const items = [...allStartups, ...allStartups];
+  const trackRef = useRef<HTMLDivElement>(null);
+
+  return (
+    <div className="overflow-hidden relative">
+      {/* Gradient masks on edges */}
+      <div className="absolute left-0 top-0 bottom-0 w-16 md:w-32 bg-gradient-to-r from-background to-transparent z-10 pointer-events-none" />
+      <div className="absolute right-0 top-0 bottom-0 w-16 md:w-32 bg-gradient-to-l from-background to-transparent z-10 pointer-events-none" />
+      <div
+        ref={trackRef}
+        className="flex gap-6 animate-marquee"
+        style={{ width: "max-content" }}
+      >
+        {items.map((s, i) => (
+          <div key={`${s.id}-${i}`} className="w-[300px] md:w-[340px] flex-shrink-0">
+            <StartupCard startup={s} />
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+};
+
 const LandingPage = () => {
-  const featuredStartups = startups.slice(0, 6);
   const featuredMentors = mentors.slice(0, 6);
   const scrollRef = useScrollReveal();
   const [hoveredLocation, setHoveredLocation] = useState<number | null>(null);
@@ -73,24 +99,20 @@ const LandingPage = () => {
 
           <div className="container relative z-10 py-20">
             <div className="max-w-3xl">
-              <div className="inline-flex items-center gap-2 glass rounded-full px-4 py-2 mb-6 animate-fade-in-up">
-                <Mountain className="h-4 w-4 text-primary" />
-                <span className="text-sm text-secondary-foreground/80 font-medium">East Africa's #1 Angel Investment Platform</span>
-              </div>
-              <h1 className="text-4xl md:text-6xl lg:text-7xl font-display font-bold text-secondary-foreground leading-[1.05] animate-fade-in-up">
+              <h1 className="text-3xl sm:text-4xl md:text-6xl lg:text-7xl font-display font-bold text-secondary-foreground leading-[1.05]">
                 Where East African Startups Meet{" "}
                 <span className="shimmer">Smart Capital</span>
               </h1>
-              <p className="mt-6 text-lg md:text-xl text-secondary-foreground/60 max-w-xl animate-fade-in-up leading-relaxed" style={{ animationDelay: "150ms" }}>
+              <p className="mt-6 text-base sm:text-lg md:text-xl text-secondary-foreground/60 max-w-xl leading-relaxed">
                 KMAN connects visionary founders with angel investors and mentors across the Kilimanjaro region and beyond.
               </p>
-              <div className="mt-10 flex flex-wrap gap-4 animate-fade-in-up" style={{ animationDelay: "300ms" }}>
-                <Link to="/apply"><KmanButton variant="primary" size="lg">Apply for Funding <ArrowRight className="h-4 w-4" /></KmanButton></Link>
-                <Link to="/investors"><KmanButton variant="outline" size="lg" className="border-secondary-foreground/20 text-secondary-foreground hover:bg-secondary-foreground/10 hover:text-secondary-foreground">Become an Investor</KmanButton></Link>
+              <div className="mt-8 sm:mt-10 flex flex-col sm:flex-row gap-3 sm:gap-4">
+                <Link to="/apply"><KmanButton variant="primary" size="lg" className="w-full sm:w-auto">Apply for Funding <ArrowRight className="h-4 w-4" /></KmanButton></Link>
+                <Link to="/investors"><KmanButton variant="outline" size="lg" className="w-full sm:w-auto border-secondary-foreground/20 text-secondary-foreground hover:bg-secondary-foreground/10 hover:text-secondary-foreground">Become an Investor</KmanButton></Link>
               </div>
             </div>
 
-            {/* Floating stat badges */}
+            {/* Floating stat badges — hidden on mobile/tablet */}
             <div className="hidden lg:block absolute top-16 right-16 float" style={{ animationDelay: "-1s" }}>
               <div className="glass rounded-2xl px-5 py-4 pulse-gold">
                 <p className="text-2xl font-display font-bold text-secondary-foreground">42</p>
@@ -113,15 +135,15 @@ const LandingPage = () => {
 
           <MountainSilhouette />
 
-          <div className="absolute bottom-8 left-1/2 -translate-x-1/2 z-10 text-secondary-foreground/30 animate-bounce-down">
+          <div className="absolute bottom-8 left-1/2 -translate-x-1/2 z-10 text-secondary-foreground/30 animate-bounce-down hidden sm:block">
             <ChevronDown className="h-6 w-6" />
           </div>
         </section>
 
         {/* Stats */}
-        <section className="py-24 bg-card">
+        <section className="py-16 md:py-24 bg-card">
           <div className="container">
-            <div className="reveal grid grid-cols-2 md:grid-cols-4 gap-8">
+            <div className="reveal grid grid-cols-2 md:grid-cols-4 gap-6 md:gap-8">
               {stats.map((s, i) => (
                 <div key={s.label} className={`reveal reveal-delay-${i + 1}`}>
                   <StatCounter {...s} />
@@ -131,40 +153,30 @@ const LandingPage = () => {
           </div>
         </section>
 
-        {/* Featured Startups — with images */}
-        <section className="py-24 bg-background">
-          <div className="container">
-            <div className="reveal flex items-end justify-between mb-12">
+        {/* Featured Startups — horizontal auto-scrolling marquee */}
+        <section className="py-16 md:py-24 bg-background">
+          <div className="container mb-8 md:mb-12">
+            <div className="reveal flex flex-col sm:flex-row items-start sm:items-end justify-between gap-4">
               <div>
                 <span className="text-sm font-semibold text-primary uppercase tracking-wider">Portfolio</span>
-                <h2 className="text-3xl md:text-4xl font-display font-bold mt-2">Startups Making Moves</h2>
-                <p className="text-muted-foreground mt-2 max-w-md">Discover high-potential ventures across East Africa ready for investment</p>
+                <h2 className="text-2xl sm:text-3xl md:text-4xl font-display font-bold mt-2">Startups Making Moves</h2>
+                <p className="text-muted-foreground mt-2 max-w-md text-sm sm:text-base">Discover high-potential ventures across East Africa ready for investment</p>
               </div>
-              <Link to="/startups" className="hidden md:inline-flex">
+              <Link to="/startups">
                 <KmanButton variant="ghost">View All <ArrowRight className="h-4 w-4" /></KmanButton>
               </Link>
             </div>
-            <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
-              {featuredStartups.map((s, i) => (
-                <div key={s.id} className={`reveal reveal-delay-${(i % 3) + 1}`}>
-                  <StartupCard startup={s} />
-                </div>
-              ))}
-            </div>
-            <div className="md:hidden mt-8 text-center reveal">
-              <Link to="/startups"><KmanButton variant="ghost">View All Startups <ArrowRight className="h-4 w-4" /></KmanButton></Link>
-            </div>
           </div>
+          <StartupMarquee />
         </section>
 
-        {/* Mentor Network — creative connected graph style */}
-        <section className="py-24 bg-secondary grain-overlay relative overflow-hidden">
+        {/* Mentor Network */}
+        <section className="py-16 md:py-24 bg-secondary grain-overlay relative overflow-hidden">
           <div className="absolute top-20 right-20 w-96 h-96 rounded-full bg-primary/8 blur-[150px]" />
           <div className="container relative z-10">
-            <div className="grid lg:grid-cols-2 gap-16 items-center">
-              {/* Left — Network visualization */}
-              <div className="reveal relative h-[420px]">
-                {/* Connection lines — SVG */}
+            <div className="grid lg:grid-cols-2 gap-10 lg:gap-16 items-center">
+              {/* Left — Network visualization (hidden on mobile, replaced with stacked cards) */}
+              <div className="reveal relative hidden lg:block h-[420px]">
                 <svg className="absolute inset-0 w-full h-full" viewBox="0 0 500 420">
                   <line x1="150" y1="80" x2="300" y2="180" stroke="hsl(var(--primary))" strokeOpacity="0.2" strokeWidth="1" />
                   <line x1="300" y1="180" x2="400" y2="100" stroke="hsl(var(--primary))" strokeOpacity="0.15" strokeWidth="1" />
@@ -173,14 +185,12 @@ const LandingPage = () => {
                   <line x1="120" y1="280" x2="250" y2="370" stroke="hsl(var(--primary))" strokeOpacity="0.1" strokeWidth="1" />
                   <line x1="150" y1="80" x2="60" y2="180" stroke="hsl(var(--primary))" strokeOpacity="0.1" strokeWidth="1" />
                   <line x1="60" y1="180" x2="120" y2="280" stroke="hsl(var(--primary))" strokeOpacity="0.15" strokeWidth="1" />
-                  {/* Dots */}
                   <circle cx="200" cy="130" r="3" fill="hsl(var(--primary))" opacity="0.3" />
                   <circle cx="350" cy="250" r="2" fill="hsl(var(--primary))" opacity="0.2" />
                   <circle cx="180" cy="340" r="2.5" fill="hsl(var(--primary))" opacity="0.25" />
                   <circle cx="440" cy="200" r="2" fill="hsl(var(--primary))" opacity="0.15" />
                 </svg>
 
-                {/* Mentor avatars positioned */}
                 {featuredMentors.slice(0, 6).map((m, i) => {
                   const positions = [
                     { top: "8%", left: "25%" },
@@ -195,11 +205,7 @@ const LandingPage = () => {
                   const size = sizes[i];
 
                   return (
-                    <div
-                      key={m.id}
-                      className="absolute float group/mentor"
-                      style={{ ...pos, animationDelay: `${i * -1.5}s` }}
-                    >
+                    <div key={m.id} className="absolute float group/mentor" style={{ ...pos, animationDelay: `${i * -1.5}s` }}>
                       <div
                         className="rounded-full border-2 border-primary/20 bg-secondary flex items-center justify-center overflow-hidden transition-all duration-300 group-hover/mentor:border-primary group-hover/mentor:scale-110 group-hover/mentor:shadow-lg group-hover/mentor:shadow-primary/20"
                         style={{ width: size, height: size }}
@@ -219,8 +225,8 @@ const LandingPage = () => {
               {/* Right — Content */}
               <div className="reveal">
                 <span className="text-sm font-semibold text-primary uppercase tracking-wider">Mentorship</span>
-                <h2 className="text-3xl md:text-4xl font-display font-bold text-secondary-foreground mt-2 mb-6">Learn from the Best</h2>
-                <p className="text-secondary-foreground/60 leading-relaxed mb-8 text-lg">
+                <h2 className="text-2xl sm:text-3xl md:text-4xl font-display font-bold text-secondary-foreground mt-2 mb-6">Learn from the Best</h2>
+                <p className="text-secondary-foreground/60 leading-relaxed mb-8 text-base sm:text-lg">
                   World-class mentors from across the East African ecosystem. Connect with industry leaders who've been where you want to go.
                 </p>
 
@@ -248,7 +254,7 @@ const LandingPage = () => {
                       </div>
                       <div className="min-w-0 flex-1">
                         <p className="text-sm font-semibold text-secondary-foreground truncate">{m.name}</p>
-                        <p className="text-xs text-secondary-foreground/50">{m.title} — {m.company}</p>
+                        <p className="text-xs text-secondary-foreground/50 truncate">{m.title} — {m.company}</p>
                       </div>
                       <div className="flex items-center gap-1">
                         <Star className="h-3.5 w-3.5 text-primary fill-primary" />
@@ -268,14 +274,14 @@ const LandingPage = () => {
           </div>
         </section>
 
-        {/* Network Locations — card carousel like screenshot 2 */}
-        <section className="py-24 bg-background">
+        {/* Network Locations */}
+        <section className="py-16 md:py-24 bg-background">
           <div className="container">
-            <div className="reveal flex flex-col md:flex-row items-start md:items-end justify-between mb-12 gap-4">
+            <div className="reveal flex flex-col sm:flex-row items-start sm:items-end justify-between mb-8 md:mb-12 gap-4">
               <div>
                 <span className="text-sm font-semibold text-primary uppercase tracking-wider">Reach</span>
-                <h2 className="text-3xl md:text-4xl font-display font-bold mt-2">Our East African Footprint</h2>
-                <p className="text-muted-foreground mt-2 max-w-lg">
+                <h2 className="text-2xl sm:text-3xl md:text-4xl font-display font-bold mt-2">Our East African Footprint</h2>
+                <p className="text-muted-foreground mt-2 max-w-lg text-sm sm:text-base">
                   Our presence connects innovation ecosystems across East Africa, bringing together founders and capital across borders.
                 </p>
               </div>
@@ -284,38 +290,27 @@ const LandingPage = () => {
               </Link>
             </div>
 
-            <div className="reveal grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+            <div className="reveal grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 md:gap-6">
               {locations.map((loc, i) => (
                 <div
                   key={loc.city}
                   className={`reveal reveal-delay-${i + 1} group relative rounded-2xl overflow-hidden cursor-pointer transition-all duration-500`}
-                  style={{ height: 400 }}
+                  style={{ height: 320 }}
                   onMouseEnter={() => setHoveredLocation(i)}
                   onMouseLeave={() => setHoveredLocation(null)}
                 >
-                  <img
-                    src={loc.image}
-                    alt={loc.city}
-                    loading="lazy"
-                    className="absolute inset-0 w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
-                  />
+                  <img src={loc.image} alt={loc.city} loading="lazy" className="absolute inset-0 w-full h-full object-cover transition-transform duration-700 group-hover:scale-110" />
                   <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/20 to-transparent" />
-
-                  {/* Badge */}
                   <div className="absolute top-4 left-4">
-                    <span className="glass rounded-full px-3 py-1.5 text-xs font-semibold text-white/90 border border-white/20">
-                      {loc.label}
-                    </span>
+                    <span className="glass rounded-full px-3 py-1.5 text-xs font-semibold text-white/90 border border-white/20">{loc.label}</span>
                   </div>
-
-                  {/* Bottom content */}
-                  <div className="absolute bottom-0 left-0 right-0 p-5">
+                  <div className="absolute bottom-0 left-0 right-0 p-4 sm:p-5">
                     <div className="flex items-end justify-between">
                       <div>
-                        <h3 className="text-xl font-display font-bold text-white">{loc.city}</h3>
+                        <h3 className="text-lg sm:text-xl font-display font-bold text-white">{loc.city}</h3>
                         <p className="text-sm text-white/60">{loc.country}</p>
                       </div>
-                      <div className={`flex h-10 w-10 items-center justify-center rounded-full bg-white/10 backdrop-blur-sm border border-white/20 transition-all duration-300 ${hoveredLocation === i ? "bg-primary border-primary" : ""}`}>
+                      <div className={`flex h-9 w-9 sm:h-10 sm:w-10 items-center justify-center rounded-full bg-white/10 backdrop-blur-sm border border-white/20 transition-all duration-300 ${hoveredLocation === i ? "bg-primary border-primary" : ""}`}>
                         <ArrowRight className="h-4 w-4 text-white" />
                       </div>
                     </div>
@@ -326,40 +321,57 @@ const LandingPage = () => {
           </div>
         </section>
 
-        {/* Partners */}
-        <section className="py-20 bg-card border-y border-border">
-          <div className="container">
-            <div className="reveal text-center mb-12">
+        {/* Partners — redesigned */}
+        <section className="py-16 md:py-24 bg-secondary grain-overlay relative overflow-hidden">
+          <div className="absolute bottom-10 left-10 w-72 h-72 rounded-full bg-primary/10 blur-[120px]" />
+          <div className="container relative z-10">
+            <div className="reveal text-center mb-10 md:mb-16">
               <span className="text-sm font-semibold text-primary uppercase tracking-wider">Ecosystem</span>
-              <h2 className="text-2xl md:text-3xl font-display font-bold mt-2">Our Partners & Ecosystem</h2>
-              <p className="text-muted-foreground mt-2 max-w-md mx-auto">Backed by leading institutions across East Africa</p>
+              <h2 className="text-2xl sm:text-3xl md:text-4xl font-display font-bold text-secondary-foreground mt-2">Our Partners & Ecosystem</h2>
+              <p className="text-secondary-foreground/50 mt-3 max-w-lg mx-auto text-sm sm:text-base">Backed by leading institutions powering East Africa's innovation economy</p>
             </div>
-            <div className="reveal grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4">
-              {partners.map((p) => (
+            <div className="reveal grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-6">
+              {partners.map((p, i) => (
                 <div
                   key={p.name}
-                  className="group flex flex-col items-center justify-center gap-3 rounded-2xl border border-border bg-background p-6 transition-all duration-300 hover:border-primary/30 hover:shadow-lg hover:shadow-primary/5 hover:-translate-y-1"
+                  className={`reveal reveal-delay-${(i % 3) + 1} group relative glass rounded-2xl p-6 sm:p-8 transition-all duration-500 hover:border-primary/30 hover:-translate-y-1 hover:shadow-xl hover:shadow-primary/10 cursor-pointer`}
                 >
-                  <div className="flex h-14 w-14 items-center justify-center rounded-xl bg-muted group-hover:bg-primary/10 transition-colors duration-300">
-                    <span className="text-lg font-display font-bold text-muted-foreground group-hover:text-primary transition-colors">{p.short[0]}</span>
+                  <div className="flex items-start gap-4">
+                    <div className="flex h-14 w-14 shrink-0 items-center justify-center rounded-2xl bg-primary/10 group-hover:bg-primary/20 transition-colors duration-300 border border-primary/10">
+                      <span className="text-xl font-display font-bold text-primary">{p.short[0]}{p.short[1]}</span>
+                    </div>
+                    <div className="min-w-0 flex-1">
+                      <p className="font-semibold text-secondary-foreground group-hover:text-primary transition-colors text-sm sm:text-base">{p.name}</p>
+                      <span className="inline-block mt-2 text-xs font-medium text-secondary-foreground/40 bg-secondary-foreground/5 rounded-full px-3 py-1">{p.type}</span>
+                    </div>
                   </div>
-                  <p className="text-xs text-muted-foreground text-center font-medium leading-tight group-hover:text-foreground transition-colors">{p.name}</p>
+                  {/* Subtle corner accent */}
+                  <div className="absolute top-0 right-0 w-16 h-16 overflow-hidden rounded-tr-2xl">
+                    <div className="absolute top-0 right-0 w-8 h-8 bg-primary/5 rounded-bl-2xl group-hover:bg-primary/10 transition-colors" />
+                  </div>
                 </div>
               ))}
+            </div>
+            <div className="text-center mt-10">
+              <Link to="/about">
+                <KmanButton variant="outline" className="border-secondary-foreground/20 text-secondary-foreground hover:bg-secondary-foreground/10 hover:text-secondary-foreground">
+                  Explore Our Ecosystem <ArrowRight className="h-4 w-4" />
+                </KmanButton>
+              </Link>
             </div>
           </div>
         </section>
 
         {/* CTA Banner */}
-        <section className="py-24 gradient-gold relative overflow-hidden">
+        <section className="py-16 md:py-24 gradient-gold relative overflow-hidden">
           <div className="absolute inset-0 bg-[radial-gradient(circle_at_30%_50%,rgba(255,255,255,0.15),transparent_50%)]" />
-          <div className="container relative text-center">
+          <div className="container relative text-center px-4">
             <div className="reveal">
-              <h2 className="text-3xl md:text-5xl font-display font-bold text-secondary mb-4">Ready to Join the Network?</h2>
-              <p className="text-secondary/70 mb-10 max-w-xl mx-auto text-lg">Whether you're a founder seeking funding or an investor looking for the next big opportunity, KMAN is your gateway.</p>
-              <div className="flex flex-wrap justify-center gap-4">
-                <Link to="/apply"><KmanButton variant="secondary" size="lg">Apply as Startup</KmanButton></Link>
-                <Link to="/register"><KmanButton variant="outline" size="lg" className="border-secondary text-secondary hover:bg-secondary hover:text-secondary-foreground">Join as Investor</KmanButton></Link>
+              <h2 className="text-2xl sm:text-3xl md:text-5xl font-display font-bold text-secondary mb-4">Ready to Join the Network?</h2>
+              <p className="text-secondary/70 mb-8 md:mb-10 max-w-xl mx-auto text-base sm:text-lg">Whether you're a founder seeking funding or an investor looking for the next big opportunity, KMAN is your gateway.</p>
+              <div className="flex flex-col sm:flex-row justify-center gap-3 sm:gap-4">
+                <Link to="/apply"><KmanButton variant="secondary" size="lg" className="w-full sm:w-auto">Apply as Startup</KmanButton></Link>
+                <Link to="/register"><KmanButton variant="outline" size="lg" className="w-full sm:w-auto border-secondary text-secondary hover:bg-secondary hover:text-secondary-foreground">Join as Investor</KmanButton></Link>
               </div>
             </div>
           </div>

@@ -36,12 +36,13 @@ const socialLinks = [
 
 export const Footer = () => {
   const [email, setEmail] = useState("");
+  const currentYear = new Date().getFullYear();
 
   return (
     <footer className="bg-secondary text-secondary-foreground">
       {/* Newsletter CTA */}
       <div className="border-b border-secondary-foreground/10">
-        <div className="container py-12">
+        <div className="container py-10 md:py-12 px-4">
           <div className="flex flex-col md:flex-row items-center justify-between gap-6">
             <div className="text-center md:text-left">
               <h3 className="text-xl font-display font-bold">Stay in the Loop</h3>
@@ -55,8 +56,8 @@ export const Footer = () => {
                 placeholder="Enter your email"
                 className="flex-1 md:w-72 rounded-full bg-secondary-foreground/10 border border-secondary-foreground/15 px-5 py-2.5 text-sm text-secondary-foreground placeholder:text-secondary-foreground/40 focus:outline-none focus:ring-2 focus:ring-primary"
               />
-              <button className="gradient-gold rounded-full px-6 py-2.5 text-sm font-semibold text-secondary flex items-center gap-2 hover:brightness-110 transition-all">
-                Subscribe <ArrowRight className="h-4 w-4" />
+              <button className="gradient-gold rounded-full px-5 sm:px-6 py-2.5 text-sm font-semibold text-secondary flex items-center gap-2 hover:brightness-110 transition-all whitespace-nowrap">
+                Subscribe <ArrowRight className="h-4 w-4 hidden sm:inline" />
               </button>
             </div>
           </div>
@@ -64,10 +65,10 @@ export const Footer = () => {
       </div>
 
       {/* Main Footer */}
-      <div className="container py-16">
-        <div className="grid gap-10 md:grid-cols-2 lg:grid-cols-5">
+      <div className="container py-12 md:py-16 px-4">
+        <div className="grid gap-10 sm:grid-cols-2 lg:grid-cols-5">
           {/* Brand */}
-          <div className="lg:col-span-2">
+          <div className="sm:col-span-2">
             <Link to="/" className="inline-block">
               <img src={kmanLogo} alt="KMAN" className="h-10 w-auto brightness-0 invert mb-4" />
             </Link>
@@ -130,10 +131,10 @@ export const Footer = () => {
 
       {/* Social + Bottom */}
       <div className="border-t border-secondary-foreground/10">
-        <div className="container flex flex-col md:flex-row items-center justify-between py-6 gap-4">
+        <div className="container flex flex-col sm:flex-row items-center justify-between py-6 gap-4 px-4">
           <div className="flex items-center gap-2">
             <Mountain className="h-4 w-4 text-primary" />
-            <p className="text-xs text-secondary-foreground/50">© 2025 Kilimanjaro Angel & Mentor Network. All rights reserved.</p>
+            <p className="text-xs text-secondary-foreground/50">© {currentYear} Kilimanjaro Angel & Mentor Network. All rights reserved.</p>
           </div>
           <div className="flex items-center gap-1">
             {socialLinks.map(({ Icon, label, href }) => (
