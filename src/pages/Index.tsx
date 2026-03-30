@@ -5,20 +5,19 @@ import { StartupCard } from "@/components/kman/StartupCard";
 import { startups, mentors } from "@/data/mockData";
 import { useCountUp } from "@/hooks/useCountUp";
 import { useScrollReveal } from "@/hooks/useScrollReveal";
-import { ChevronDown, ArrowRight, Star, Globe, Building2, Lightbulb, Handshake, GraduationCap, Shield, TrendingUp } from "lucide-react";
-import { useState, useRef, useEffect } from "react";
+import { ArrowRight, Star, Globe, Building2, Lightbulb, Handshake, Shield, TrendingUp, Users, Zap } from "lucide-react";
+import { useRef, useState, useEffect, useCallback } from "react";
 
-// Location images
 import darImg from "@/assets/locations/dar-es-salaam.jpg";
 import nairobiImg from "@/assets/locations/nairobi.jpg";
 import kigaliImg from "@/assets/locations/kigali.jpg";
 import kampalaImg from "@/assets/locations/kampala.jpg";
 
 const stats = [
-  { value: 42, label: "Angel Investors" },
-  { value: 67, label: "Startups Supported" },
-  { value: 2.4, label: "Capital Deployed", prefix: "$", suffix: "M" },
-  { value: 18, label: "Mentors Active" },
+  { value: 42, label: "Angel Investors", icon: Users },
+  { value: 67, label: "Startups Supported", icon: Zap },
+  { value: 2.4, label: "Capital Deployed", prefix: "$", suffix: "M", icon: TrendingUp },
+  { value: 18, label: "Mentors Active", icon: Lightbulb },
 ];
 
 const locations = [
@@ -37,42 +36,32 @@ const partners = [
   { name: "Africa Development Bank", short: "AfDB", type: "Development Finance" },
 ];
 
-const StatCounter = ({ value, label, prefix = "", suffix = "" }: { value: number; label: string; prefix?: string; suffix?: string }) => {
+const StatCounter = ({ value, label, prefix = "", suffix = "", icon: Icon, delay }: { value: number; label: string; prefix?: string; suffix?: string; icon: any; delay: number }) => {
   const count = useCountUp(value === 2.4 ? 24 : value);
   const display = value === 2.4 ? (count / 10).toFixed(1) : count;
   return (
-    <div className="text-center group">
-      <div className="h-1 w-12 mx-auto gradient-gold rounded-full mb-4 group-hover:w-20 transition-all duration-500" />
-      <p className="text-4xl md:text-5xl font-display font-bold text-foreground">{prefix}{display}{suffix}</p>
-      <p className="text-sm text-muted-foreground mt-2 font-medium">{label}</p>
+    <div
+      className="text-center group animate-fade-in-up"
+      style={{ animationDelay: `${1.5 + delay * 0.15}s` }}
+    >
+      <div className="flex items-center justify-center mb-3">
+        <Icon className="h-5 w-5 text-primary/60" />
+      </div>
+      <p className="text-3xl md:text-4xl font-mono font-medium text-primary group-hover:drop-shadow-[0_0_12px_rgba(240,168,0,0.4)] transition-all duration-300">
+        {prefix}{display}{suffix}
+      </p>
+      <p className="text-[11px] uppercase tracking-[0.2em] text-white/40 mt-2 font-medium">{label}</p>
     </div>
   );
 };
 
-const MountainSilhouette = () => (
-  <svg className="absolute bottom-0 left-0 w-full h-32 md:h-48" viewBox="0 0 1440 200" preserveAspectRatio="none" fill="none">
-    <path d="M0 200L120 180C180 170 240 160 360 140C420 130 480 120 540 115C600 110 660 108 720 105C780 100 840 98 900 100C960 102 1020 108 1080 115C1140 122 1200 130 1260 145C1320 160 1380 170 1440 180V200H0Z" fill="hsl(40, 100%, 49%)" fillOpacity="0.1" />
-    <path d="M0 200L100 185C200 175 300 170 400 155C500 142 600 130 700 125C800 120 900 122 1000 130C1100 138 1200 150 1300 165C1400 175 1440 185 1440 190V200H0Z" fill="hsl(207, 43%, 19%)" fillOpacity="0.3" />
-  </svg>
-);
-
-/* Infinite horizontal marquee for startup cards */
 const StartupMarquee = () => {
-  const allStartups = startups;
-  // Duplicate for seamless loop
-  const items = [...allStartups, ...allStartups];
-  const trackRef = useRef<HTMLDivElement>(null);
-
+  const items = [...startups, ...startups];
   return (
     <div className="overflow-hidden relative">
-      {/* Gradient masks on edges */}
-      <div className="absolute left-0 top-0 bottom-0 w-16 md:w-32 bg-gradient-to-r from-background to-transparent z-10 pointer-events-none" />
-      <div className="absolute right-0 top-0 bottom-0 w-16 md:w-32 bg-gradient-to-l from-background to-transparent z-10 pointer-events-none" />
-      <div
-        ref={trackRef}
-        className="flex gap-6 animate-marquee"
-        style={{ width: "max-content" }}
-      >
+      <div className="absolute left-0 top-0 bottom-0 w-16 md:w-32 bg-gradient-to-r from-[hsl(230,60%,5%)] to-transparent z-10 pointer-events-none" />
+      <div className="absolute right-0 top-0 bottom-0 w-16 md:w-32 bg-gradient-to-l from-[hsl(230,60%,5%)] to-transparent z-10 pointer-events-none" />
+      <div className="flex gap-6 animate-marquee" style={{ width: "max-content" }}>
         {items.map((s, i) => (
           <div key={`${s.id}-${i}`} className="w-[300px] md:w-[340px] flex-shrink-0">
             <StartupCard startup={s} />
@@ -92,78 +81,84 @@ const LandingPage = () => {
     <PublicLayout>
       <div ref={scrollRef}>
         {/* Hero */}
-        <section className="relative min-h-[92vh] flex items-center bg-secondary grain-overlay overflow-hidden">
-          <div className="absolute top-10 right-10 w-80 h-80 rounded-full bg-primary/15 blur-[120px] float" />
-          <div className="absolute top-40 right-40 w-40 h-40 rounded-full bg-primary/25 blur-[80px] float float-delay-1" />
-          <div className="absolute bottom-40 left-20 w-24 h-24 rounded-full bg-primary/10 blur-[60px] float float-delay-2" />
+        <section className="relative min-h-[92vh] flex items-center overflow-hidden">
+          {/* Dark overlay on canvas */}
+          <div className="absolute inset-0 bg-gradient-to-b from-[rgba(5,8,20,0.85)] via-[rgba(10,12,30,0.75)] to-[rgba(5,8,20,0.9)] z-[1]" />
 
-          <div className="container relative z-10 py-20">
+          <div className="container relative z-[3] py-20">
             <div className="max-w-3xl">
-              <h1 className="text-3xl sm:text-4xl md:text-6xl lg:text-7xl font-display font-bold text-secondary-foreground leading-[1.05]">
-                Where East African Startups Meet{" "}
-                <span className="shimmer">Smart Capital</span>
+              {/* Badge */}
+              <div
+                className="inline-flex items-center gap-2 rounded-full border border-primary/30 bg-primary/5 backdrop-blur-sm px-4 py-1.5 mb-8 animate-fade-in-up"
+                style={{ animationDelay: "0.3s" }}
+              >
+                <span className="text-xs font-medium text-primary/80">🌍 East Africa's Premier Investment Network</span>
+              </div>
+
+              {/* Headline */}
+              <h1 className="text-[52px] sm:text-[72px] md:text-[96px] font-display font-bold leading-[1] tracking-[-2px]">
+                <span className="block text-white animate-fade-in-up" style={{ animationDelay: "0.6s" }}>Connect.</span>
+                <span className="block text-gradient-gold animate-fade-in-up" style={{ animationDelay: "0.75s" }}>Invest.</span>
+                <span className="block text-white animate-fade-in-up" style={{ animationDelay: "0.9s" }}>Elevate.</span>
               </h1>
-              <p className="mt-6 text-base sm:text-lg md:text-xl text-secondary-foreground/60 max-w-xl leading-relaxed">
-                KMAN connects visionary founders with angel investors and mentors across the Kilimanjaro region and beyond.
+
+              {/* Subheading */}
+              <p
+                className="mt-6 text-lg md:text-xl text-white/55 max-w-[500px] leading-relaxed font-light animate-fade-in-up"
+                style={{ animationDelay: "0.9s" }}
+              >
+                Where African Founders Meet Global Capital
               </p>
-              <div className="mt-8 sm:mt-10 flex flex-col sm:flex-row gap-3 sm:gap-4">
-                <Link to="/apply"><KmanButton variant="primary" size="lg" className="w-full sm:w-auto">Apply for Funding <ArrowRight className="h-4 w-4" /></KmanButton></Link>
-                <Link to="/investors"><KmanButton variant="outline" size="lg" className="w-full sm:w-auto border-secondary-foreground/20 text-secondary-foreground hover:bg-secondary-foreground/10 hover:text-secondary-foreground">Become an Investor</KmanButton></Link>
-              </div>
-            </div>
 
-            {/* Floating stat badges — hidden on mobile/tablet */}
-            <div className="hidden lg:block absolute top-16 right-16 float" style={{ animationDelay: "-1s" }}>
-              <div className="glass rounded-2xl px-5 py-4 pulse-gold">
-                <p className="text-2xl font-display font-bold text-secondary-foreground">42</p>
-                <p className="text-xs text-secondary-foreground/50 font-medium">Angel Investors</p>
-              </div>
-            </div>
-            <div className="hidden lg:block absolute top-48 right-4 float float-delay-1">
-              <div className="glass rounded-2xl px-5 py-4">
-                <p className="text-2xl font-display font-bold text-primary">$2.4M</p>
-                <p className="text-xs text-secondary-foreground/50 font-medium">Deployed</p>
-              </div>
-            </div>
-            <div className="hidden lg:block absolute bottom-36 right-28 float float-delay-2">
-              <div className="glass rounded-2xl px-5 py-4">
-                <p className="text-2xl font-display font-bold text-secondary-foreground">67</p>
-                <p className="text-xs text-secondary-foreground/50 font-medium">Startups</p>
+              {/* CTAs */}
+              <div
+                className="mt-10 flex flex-col sm:flex-row gap-3 animate-fade-in-up"
+                style={{ animationDelay: "1.2s" }}
+              >
+                <Link to="/apply">
+                  <KmanButton variant="primary" size="lg" className="w-full sm:w-auto rounded-full px-8 py-4 text-base">
+                    Join the Network <ArrowRight className="h-4 w-4" />
+                  </KmanButton>
+                </Link>
+                <Link to="/startups">
+                  <KmanButton variant="ghost" size="lg" className="w-full sm:w-auto rounded-full px-8 py-4 text-base border border-primary/30 text-white hover:bg-primary/10">
+                    Explore Opportunities
+                  </KmanButton>
+                </Link>
               </div>
             </div>
           </div>
 
-          <MountainSilhouette />
-
-          <div className="absolute bottom-8 left-1/2 -translate-x-1/2 z-10 text-secondary-foreground/30 animate-bounce-down hidden sm:block">
-            <ChevronDown className="h-6 w-6" />
+          {/* Scroll indicator */}
+          <div className="absolute bottom-8 left-1/2 -translate-x-1/2 z-[3] text-white/20 animate-bounce-down hidden sm:block">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M7 13l5 5 5-5M7 6l5 5 5-5"/></svg>
           </div>
         </section>
 
-        {/* Stats */}
-        <section className="py-16 md:py-24 bg-card">
-          <div className="container">
-            <div className="reveal grid grid-cols-2 md:grid-cols-4 gap-6 md:gap-8">
-              {stats.map((s, i) => (
-                <div key={s.label} className={`reveal reveal-delay-${i + 1}`}>
-                  <StatCounter {...s} />
-                </div>
-              ))}
+        {/* Stats Bar */}
+        <section className="relative z-[2] -mt-8 px-4">
+          <div className="container max-w-4xl">
+            <div className="rounded-2xl border border-white/[0.08] bg-white/[0.03] backdrop-blur-xl p-6 md:p-8">
+              <div className="grid grid-cols-2 md:grid-cols-4 gap-6 md:gap-4">
+                {stats.map((s, i) => (
+                  <StatCounter key={s.label} {...s} delay={i} />
+                ))}
+              </div>
             </div>
           </div>
         </section>
 
-        {/* Featured Startups — horizontal auto-scrolling marquee */}
-        <section className="py-16 md:py-24 bg-background">
+        {/* Featured Startups Marquee */}
+        <section className="py-20 md:py-28 relative">
           <div className="container mb-8 md:mb-12">
-            <div className="reveal flex flex-col sm:flex-row items-start sm:items-end justify-between gap-4">
+            <div className="reveal-up flex flex-col sm:flex-row items-start sm:items-end justify-between gap-4">
               <div>
-                <span className="text-sm font-semibold text-primary uppercase tracking-wider">Portfolio</span>
-                <h2 className="text-2xl sm:text-3xl md:text-4xl font-display font-bold mt-2">Startups Making Moves</h2>
-                <p className="text-muted-foreground mt-2 max-w-md text-sm sm:text-base">Discover high-potential ventures across East Africa ready for investment</p>
+                <span className="text-xs font-semibold text-primary uppercase tracking-[0.2em]">Portfolio</span>
+                <h2 className="text-2xl sm:text-3xl md:text-4xl font-display font-bold mt-2 text-white">Startups Making Moves</h2>
+                <p className="text-white/40 mt-2 max-w-md text-sm sm:text-base font-light">High-potential ventures across East Africa ready for investment</p>
               </div>
               <Link to="/startups">
-                <KmanButton variant="ghost">View All <ArrowRight className="h-4 w-4" /></KmanButton>
+                <KmanButton variant="ghost" className="text-primary hover:bg-primary/10">View All <ArrowRight className="h-4 w-4" /></KmanButton>
               </Link>
             </div>
           </div>
@@ -171,24 +166,20 @@ const LandingPage = () => {
         </section>
 
         {/* Mentor Network */}
-        <section className="py-16 md:py-24 bg-secondary grain-overlay relative overflow-hidden">
-          <div className="absolute top-20 right-20 w-96 h-96 rounded-full bg-primary/8 blur-[150px]" />
+        <section className="py-20 md:py-28 relative overflow-hidden">
+          <div className="absolute top-20 right-20 w-96 h-96 rounded-full bg-primary/5 blur-[150px]" />
           <div className="container relative z-10">
             <div className="grid lg:grid-cols-2 gap-10 lg:gap-16 items-center">
-              {/* Left — Network visualization (hidden on mobile, replaced with stacked cards) */}
-              <div className="reveal relative hidden lg:block h-[420px]">
+              {/* Left — Network visualization */}
+              <div className="reveal-left relative hidden lg:block h-[420px]">
                 <svg className="absolute inset-0 w-full h-full" viewBox="0 0 500 420">
-                  <line x1="150" y1="80" x2="300" y2="180" stroke="hsl(var(--primary))" strokeOpacity="0.2" strokeWidth="1" />
-                  <line x1="300" y1="180" x2="400" y2="100" stroke="hsl(var(--primary))" strokeOpacity="0.15" strokeWidth="1" />
-                  <line x1="300" y1="180" x2="120" y2="280" stroke="hsl(var(--primary))" strokeOpacity="0.2" strokeWidth="1" />
-                  <line x1="300" y1="180" x2="380" y2="320" stroke="hsl(var(--primary))" strokeOpacity="0.15" strokeWidth="1" />
-                  <line x1="120" y1="280" x2="250" y2="370" stroke="hsl(var(--primary))" strokeOpacity="0.1" strokeWidth="1" />
-                  <line x1="150" y1="80" x2="60" y2="180" stroke="hsl(var(--primary))" strokeOpacity="0.1" strokeWidth="1" />
-                  <line x1="60" y1="180" x2="120" y2="280" stroke="hsl(var(--primary))" strokeOpacity="0.15" strokeWidth="1" />
-                  <circle cx="200" cy="130" r="3" fill="hsl(var(--primary))" opacity="0.3" />
-                  <circle cx="350" cy="250" r="2" fill="hsl(var(--primary))" opacity="0.2" />
-                  <circle cx="180" cy="340" r="2.5" fill="hsl(var(--primary))" opacity="0.25" />
-                  <circle cx="440" cy="200" r="2" fill="hsl(var(--primary))" opacity="0.15" />
+                  <line x1="150" y1="80" x2="300" y2="180" stroke="rgba(240,168,0,0.15)" strokeWidth="1" />
+                  <line x1="300" y1="180" x2="400" y2="100" stroke="rgba(240,168,0,0.1)" strokeWidth="1" />
+                  <line x1="300" y1="180" x2="120" y2="280" stroke="rgba(240,168,0,0.15)" strokeWidth="1" />
+                  <line x1="300" y1="180" x2="380" y2="320" stroke="rgba(240,168,0,0.1)" strokeWidth="1" />
+                  <line x1="120" y1="280" x2="250" y2="370" stroke="rgba(240,168,0,0.08)" strokeWidth="1" />
+                  <line x1="150" y1="80" x2="60" y2="180" stroke="rgba(240,168,0,0.08)" strokeWidth="1" />
+                  <line x1="60" y1="180" x2="120" y2="280" stroke="rgba(240,168,0,0.1)" strokeWidth="1" />
                 </svg>
 
                 {featuredMentors.slice(0, 6).map((m, i) => {
@@ -201,21 +192,19 @@ const LandingPage = () => {
                     { top: "75%", left: "38%" },
                   ];
                   const sizes = [72, 88, 68, 64, 72, 76];
-                  const pos = positions[i];
-                  const size = sizes[i];
 
                   return (
-                    <div key={m.id} className="absolute float group/mentor" style={{ ...pos, animationDelay: `${i * -1.5}s` }}>
+                    <div key={m.id} className="absolute float group/mentor" style={{ ...positions[i], animationDelay: `${i * -1.5}s` }}>
                       <div
-                        className="rounded-full border-2 border-primary/20 bg-secondary flex items-center justify-center overflow-hidden transition-all duration-300 group-hover/mentor:border-primary group-hover/mentor:scale-110 group-hover/mentor:shadow-lg group-hover/mentor:shadow-primary/20"
-                        style={{ width: size, height: size }}
+                        className="rounded-full border border-primary/20 bg-[hsl(230,60%,5%)] flex items-center justify-center overflow-hidden transition-all duration-300 group-hover/mentor:border-primary/60 group-hover/mentor:scale-110 group-hover/mentor:shadow-lg group-hover/mentor:shadow-primary/20"
+                        style={{ width: sizes[i], height: sizes[i] }}
                       >
-                        <div className={`w-full h-full flex items-center justify-center text-lg font-bold text-card ${m.color}`}>
+                        <div className={`w-full h-full flex items-center justify-center text-lg font-bold text-white ${m.color}`}>
                           {m.initials}
                         </div>
                       </div>
                       <div className="absolute -bottom-8 left-1/2 -translate-x-1/2 whitespace-nowrap opacity-0 group-hover/mentor:opacity-100 transition-opacity duration-200">
-                        <span className="text-xs font-semibold text-secondary-foreground bg-secondary/80 backdrop-blur-sm px-2 py-1 rounded-full">{m.name.split(" ")[0]}</span>
+                        <span className="text-xs font-semibold text-white bg-secondary/80 backdrop-blur-sm px-2 py-1 rounded-full">{m.name.split(" ")[0]}</span>
                       </div>
                     </div>
                   );
@@ -223,10 +212,10 @@ const LandingPage = () => {
               </div>
 
               {/* Right — Content */}
-              <div className="reveal">
-                <span className="text-sm font-semibold text-primary uppercase tracking-wider">Mentorship</span>
-                <h2 className="text-2xl sm:text-3xl md:text-4xl font-display font-bold text-secondary-foreground mt-2 mb-6">Learn from the Best</h2>
-                <p className="text-secondary-foreground/60 leading-relaxed mb-8 text-base sm:text-lg">
+              <div className="reveal-right">
+                <span className="text-xs font-semibold text-primary uppercase tracking-[0.2em]">Mentorship</span>
+                <h2 className="text-2xl sm:text-3xl md:text-4xl font-display font-bold text-white mt-2 mb-6">Learn from the Best</h2>
+                <p className="text-white/50 leading-relaxed mb-8 text-base sm:text-lg font-light">
                   World-class mentors from across the East African ecosystem. Connect with industry leaders who've been where you want to go.
                 </p>
 
@@ -237,10 +226,10 @@ const LandingPage = () => {
                     { icon: Building2, text: "Industry leaders from top companies across East Africa" },
                   ].map((item, i) => (
                     <div key={i} className="flex items-start gap-3">
-                      <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-primary/10">
+                      <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-primary/10 border border-primary/10">
                         <item.icon className="h-4 w-4 text-primary" />
                       </div>
-                      <p className="text-secondary-foreground/70 text-sm leading-relaxed pt-1">{item.text}</p>
+                      <p className="text-white/60 text-sm leading-relaxed pt-1">{item.text}</p>
                     </div>
                   ))}
                 </div>
@@ -248,17 +237,17 @@ const LandingPage = () => {
                 {/* Mini mentor cards */}
                 <div className="space-y-3 mb-8">
                   {featuredMentors.slice(0, 3).map((m) => (
-                    <div key={m.id} className="flex items-center gap-3 glass rounded-xl px-4 py-3">
-                      <div className={`flex h-10 w-10 shrink-0 items-center justify-center rounded-full text-sm font-bold text-card ${m.color}`}>
+                    <div key={m.id} className="flex items-center gap-3 cosmic-card rounded-xl px-4 py-3">
+                      <div className={`flex h-10 w-10 shrink-0 items-center justify-center rounded-full text-sm font-bold text-white ${m.color}`}>
                         {m.initials}
                       </div>
                       <div className="min-w-0 flex-1">
-                        <p className="text-sm font-semibold text-secondary-foreground truncate">{m.name}</p>
-                        <p className="text-xs text-secondary-foreground/50 truncate">{m.title} — {m.company}</p>
+                        <p className="text-sm font-semibold text-white truncate">{m.name}</p>
+                        <p className="text-xs text-white/40 truncate">{m.title} — {m.company}</p>
                       </div>
                       <div className="flex items-center gap-1">
                         <Star className="h-3.5 w-3.5 text-primary fill-primary" />
-                        <span className="text-sm font-semibold text-secondary-foreground">{m.rating}</span>
+                        <span className="text-sm font-semibold text-white">{m.rating}</span>
                       </div>
                     </div>
                   ))}
@@ -275,42 +264,42 @@ const LandingPage = () => {
         </section>
 
         {/* Network Locations */}
-        <section className="py-16 md:py-24 bg-background">
+        <section className="py-20 md:py-28">
           <div className="container">
-            <div className="reveal flex flex-col sm:flex-row items-start sm:items-end justify-between mb-8 md:mb-12 gap-4">
+            <div className="reveal-up flex flex-col sm:flex-row items-start sm:items-end justify-between mb-8 md:mb-12 gap-4">
               <div>
-                <span className="text-sm font-semibold text-primary uppercase tracking-wider">Reach</span>
-                <h2 className="text-2xl sm:text-3xl md:text-4xl font-display font-bold mt-2">Our East African Footprint</h2>
-                <p className="text-muted-foreground mt-2 max-w-lg text-sm sm:text-base">
-                  Our presence connects innovation ecosystems across East Africa, bringing together founders and capital across borders.
+                <span className="text-xs font-semibold text-primary uppercase tracking-[0.2em]">Reach</span>
+                <h2 className="text-2xl sm:text-3xl md:text-4xl font-display font-bold mt-2 text-white">Our East African Footprint</h2>
+                <p className="text-white/40 mt-2 max-w-lg text-sm sm:text-base font-light">
+                  Connecting innovation ecosystems across East Africa, bringing together founders and capital across borders.
                 </p>
               </div>
               <Link to="/about">
-                <KmanButton variant="outline">Learn More</KmanButton>
+                <KmanButton variant="ghost" className="border border-primary/20 text-primary hover:bg-primary/10">Learn More</KmanButton>
               </Link>
             </div>
 
-            <div className="reveal grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 md:gap-6">
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 md:gap-6">
               {locations.map((loc, i) => (
                 <div
                   key={loc.city}
-                  className={`reveal reveal-delay-${i + 1} group relative rounded-2xl overflow-hidden cursor-pointer transition-all duration-500`}
-                  style={{ height: 320 }}
+                  className="reveal-scale group relative rounded-2xl overflow-hidden cursor-pointer transition-all duration-500"
+                  style={{ height: 320, transitionDelay: `${i * 0.1}s` }}
                   onMouseEnter={() => setHoveredLocation(i)}
                   onMouseLeave={() => setHoveredLocation(null)}
                 >
                   <img src={loc.image} alt={loc.city} loading="lazy" className="absolute inset-0 w-full h-full object-cover transition-transform duration-700 group-hover:scale-110" />
-                  <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/20 to-transparent" />
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/30 to-transparent" />
                   <div className="absolute top-4 left-4">
-                    <span className="glass rounded-full px-3 py-1.5 text-xs font-semibold text-white/90 border border-white/20">{loc.label}</span>
+                    <span className="glass rounded-full px-3 py-1.5 text-xs font-semibold text-white/90 border border-white/15">{loc.label}</span>
                   </div>
                   <div className="absolute bottom-0 left-0 right-0 p-4 sm:p-5">
                     <div className="flex items-end justify-between">
                       <div>
                         <h3 className="text-lg sm:text-xl font-display font-bold text-white">{loc.city}</h3>
-                        <p className="text-sm text-white/60">{loc.country}</p>
+                        <p className="text-sm text-white/50">{loc.country}</p>
                       </div>
-                      <div className={`flex h-9 w-9 sm:h-10 sm:w-10 items-center justify-center rounded-full bg-white/10 backdrop-blur-sm border border-white/20 transition-all duration-300 ${hoveredLocation === i ? "bg-primary border-primary" : ""}`}>
+                      <div className={`flex h-9 w-9 items-center justify-center rounded-full transition-all duration-300 ${hoveredLocation === i ? "bg-primary border-primary" : "bg-white/10 backdrop-blur-sm border border-white/15"}`}>
                         <ArrowRight className="h-4 w-4 text-white" />
                       </div>
                     </div>
@@ -321,40 +310,37 @@ const LandingPage = () => {
           </div>
         </section>
 
-        {/* Partners — redesigned */}
-        <section className="py-16 md:py-24 bg-secondary grain-overlay relative overflow-hidden">
-          <div className="absolute bottom-10 left-10 w-72 h-72 rounded-full bg-primary/10 blur-[120px]" />
+        {/* Partners */}
+        <section className="py-20 md:py-28 relative overflow-hidden">
+          <div className="absolute bottom-10 left-10 w-72 h-72 rounded-full bg-primary/5 blur-[120px]" />
           <div className="container relative z-10">
-            <div className="reveal text-center mb-10 md:mb-16">
-              <span className="text-sm font-semibold text-primary uppercase tracking-wider">Ecosystem</span>
-              <h2 className="text-2xl sm:text-3xl md:text-4xl font-display font-bold text-secondary-foreground mt-2">Our Partners & Ecosystem</h2>
-              <p className="text-secondary-foreground/50 mt-3 max-w-lg mx-auto text-sm sm:text-base">Backed by leading institutions powering East Africa's innovation economy</p>
+            <div className="reveal-up text-center mb-10 md:mb-16">
+              <span className="text-xs font-semibold text-primary uppercase tracking-[0.2em]">Ecosystem</span>
+              <h2 className="text-2xl sm:text-3xl md:text-4xl font-display font-bold text-white mt-2">Our Partners & Ecosystem</h2>
+              <p className="text-white/40 mt-3 max-w-lg mx-auto text-sm sm:text-base font-light">Backed by leading institutions powering East Africa's innovation economy</p>
             </div>
-            <div className="reveal grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-6">
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-6">
               {partners.map((p, i) => (
                 <div
                   key={p.name}
-                  className={`reveal reveal-delay-${(i % 3) + 1} group relative glass rounded-2xl p-6 sm:p-8 transition-all duration-500 hover:border-primary/30 hover:-translate-y-1 hover:shadow-xl hover:shadow-primary/10 cursor-pointer`}
+                  className="reveal-scale cosmic-card rounded-2xl p-6 sm:p-8 cursor-pointer group"
+                  style={{ transitionDelay: `${(i % 3) * 0.1}s` }}
                 >
                   <div className="flex items-start gap-4">
                     <div className="flex h-14 w-14 shrink-0 items-center justify-center rounded-2xl bg-primary/10 group-hover:bg-primary/20 transition-colors duration-300 border border-primary/10">
                       <span className="text-xl font-display font-bold text-primary">{p.short[0]}{p.short[1]}</span>
                     </div>
                     <div className="min-w-0 flex-1">
-                      <p className="font-semibold text-secondary-foreground group-hover:text-primary transition-colors text-sm sm:text-base">{p.name}</p>
-                      <span className="inline-block mt-2 text-xs font-medium text-secondary-foreground/40 bg-secondary-foreground/5 rounded-full px-3 py-1">{p.type}</span>
+                      <p className="font-semibold text-white group-hover:text-primary transition-colors text-sm sm:text-base">{p.name}</p>
+                      <span className="inline-block mt-2 text-[10px] font-medium text-white/30 uppercase tracking-[0.15em] bg-white/5 rounded-full px-3 py-1">{p.type}</span>
                     </div>
-                  </div>
-                  {/* Subtle corner accent */}
-                  <div className="absolute top-0 right-0 w-16 h-16 overflow-hidden rounded-tr-2xl">
-                    <div className="absolute top-0 right-0 w-8 h-8 bg-primary/5 rounded-bl-2xl group-hover:bg-primary/10 transition-colors" />
                   </div>
                 </div>
               ))}
             </div>
             <div className="text-center mt-10">
               <Link to="/about">
-                <KmanButton variant="outline" className="border-secondary-foreground/20 text-secondary-foreground hover:bg-secondary-foreground/10 hover:text-secondary-foreground">
+                <KmanButton variant="ghost" className="border border-primary/20 text-primary hover:bg-primary/10">
                   Explore Our Ecosystem <ArrowRight className="h-4 w-4" />
                 </KmanButton>
               </Link>
@@ -363,15 +349,16 @@ const LandingPage = () => {
         </section>
 
         {/* CTA Banner */}
-        <section className="py-16 md:py-24 gradient-gold relative overflow-hidden">
+        <section className="py-20 md:py-28 relative overflow-hidden">
+          <div className="absolute inset-0 gradient-gold opacity-90" />
           <div className="absolute inset-0 bg-[radial-gradient(circle_at_30%_50%,rgba(255,255,255,0.15),transparent_50%)]" />
-          <div className="container relative text-center px-4">
-            <div className="reveal">
+          <div className="container relative text-center px-4 z-10">
+            <div className="reveal-up">
               <h2 className="text-2xl sm:text-3xl md:text-5xl font-display font-bold text-secondary mb-4">Ready to Join the Network?</h2>
               <p className="text-secondary/70 mb-8 md:mb-10 max-w-xl mx-auto text-base sm:text-lg">Whether you're a founder seeking funding or an investor looking for the next big opportunity, KMAN is your gateway.</p>
               <div className="flex flex-col sm:flex-row justify-center gap-3 sm:gap-4">
                 <Link to="/apply"><KmanButton variant="secondary" size="lg" className="w-full sm:w-auto">Apply as Startup</KmanButton></Link>
-                <Link to="/register"><KmanButton variant="outline" size="lg" className="w-full sm:w-auto border-secondary text-secondary hover:bg-secondary hover:text-secondary-foreground">Join as Investor</KmanButton></Link>
+                <Link to="/register"><KmanButton variant="outline" size="lg" className="w-full sm:w-auto border-secondary text-secondary hover:bg-secondary hover:text-white">Join as Investor</KmanButton></Link>
               </div>
             </div>
           </div>
