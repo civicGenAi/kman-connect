@@ -17,7 +17,7 @@ export const useScrollReveal = () => {
 
     const el = ref.current;
     if (el) {
-      const reveals = el.querySelectorAll(".reveal, .reveal-up, .reveal-left, .reveal-right, .reveal-scale");
+      const reveals = el.querySelectorAll(".reveal");
       reveals.forEach((r) => observer.observe(r));
     }
 
